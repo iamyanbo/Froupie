@@ -48,7 +48,6 @@ app.get('/', async (req: Request, res: Response) => {
     for (let restaurant of allRestaurants) {
         geocoded = [...geocoded, restaurant.geometry.location]
     }
-    console.log(allRestaurants[0].geometry.location)
     // split the array into chunks of size 25
     const restaurantChunks = allRestaurants.reduce((acc, cur, i) => {
         const chunkIndex = Math.floor(i / 25)
@@ -125,6 +124,6 @@ app.get('/', async (req: Request, res: Response) => {
     res.send(JSON.stringify(result));
 })
 
-app.listen(process.env.PORT || 3000, () => {
-    console.log(`Server started on port ${process.env.PORT || 3000}`);
+app.listen(process.env.PORT || 8080, () => {
+    console.log(`Server started on port ${process.env.PORT || 8080}`);
 })
