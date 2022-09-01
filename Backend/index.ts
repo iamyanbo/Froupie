@@ -16,6 +16,7 @@ app.get('/', async (req: Request, res: Response) => {
         res.send('Please provide origins');
         return;
     }
+    let geocoded: any = [];
     const originsArray = origins.split('|')
     // for each origin, get the restaurants nearby
     const restaurants: any[] = []
@@ -43,6 +44,11 @@ app.get('/', async (req: Request, res: Response) => {
             t.place_id === item.place_id
         ))
     )
+    // add each restaurant to the geocoded array
+    for (let restaurant of allRestaurants) {
+        geocoded = [...geocoded, restaurant.geometry.location]
+    }
+    console.log(allRestaurants[0].geometry.location)
     // split the array into chunks of size 25
     const restaurantChunks = allRestaurants.reduce((acc, cur, i) => {
         const chunkIndex = Math.floor(i / 25)
@@ -115,6 +121,7 @@ app.get('/', async (req: Request, res: Response) => {
     result.restaurant_names = restNames
     result.restaurant_ratings = restRatings
     result.restaurant_price_levels = restPriceLevels
+    result.geocode = geocoded
     res.send(JSON.stringify(result));
 })
 
