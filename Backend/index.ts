@@ -2,7 +2,6 @@ import { config } from 'dotenv'
 import express, { Request, Response } from 'express'
 import cors from 'cors'
 import axios from 'axios'
-import e from 'express';
 config();
 
 const app = express();
@@ -10,28 +9,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req: Request, res: Response) => {
-    const origins = req.query.origins
-    const destinations = req.query.destinations
-    const units = req.query.units
-
-    axios.get('https://maps.googleapis.com/maps/api/distancematrix/json'
-        + '?origins=' + origins
-        + '&destinations=' + destinations
-        + '&units=' + units
-        + '&key=' + process.env.GOOGLE_API_KEY
-    ).then(response => {
-        console.log(response.data.rows)
-        res.send(JSON.stringify(response.data));
-    }).catch(error => {
-        res.send(error);
-    })
-})
-
-app.get('/restaurant', async (req: Request, res: Response) => {
-    // gets user's preferred travel time, assuming mode of transportation is driving
-    const travelDuration = req.query.travelDuration
-    // origins is a string of locations seperated by '|'
+app.get('/', async (req: Request, res: Response) => {
+    // origins needs to be a string of locations seperated by '|', max of 25 origins
     const origins: any = req.query.origins
     if (origins == undefined) {
         res.send('Please provide origins');
@@ -75,23 +54,68 @@ app.get('/restaurant', async (req: Request, res: Response) => {
     }
     , [])
     // for each chunk, get the response from distance matrix api
-    const restaurantDistances: any[] = []
+    const temp: any[] = []
     for (let chunk of restaurantChunks) {
         const destinations = chunk.map((restaurant: any) => restaurant.vicinity).join('|')
         //remove special characters from destinations and origins except for '|'
         const originsClean = originsArray.map((origin: any) => origin.replace(/[^\w\s]/gi, '')).join('|')
         const destinationsClean = destinations.replace(/[&\/\\#,+()$~%.":*?<>{}]/g, '')
-        console.log(destinationsClean)
         const response = await axios.get('https://maps.googleapis.com/maps/api/distancematrix/json'
             + '?origins=' + originsClean
             + '&destinations=' + destinationsClean
             + '&units=' + 'metric'
             + '&key=' + process.env.GOOGLE_API_KEY
         )
-        console.log(response.data.rows)
-        restaurantDistances.push(response.data.rows)
+        temp.push(response.data)
     }
-    res.send(JSON.stringify(restaurantDistances));
+    // combine all the responses into one dictionary
+    const result: any = {}
+    for (let response of temp) {
+        if (response.destination_addresses != undefined) {
+            if (result["destination_addresses"] == undefined) {
+                result["destination_addresses"] = []
+            }
+            result["destination_addresses"].push(response.destination_addresses)
+            result["destination_addresses"] = result["destination_addresses"].flat()
+        }
+        if (response.origin_addresses != undefined) {
+            if (result["origin_addresses"] == undefined) {
+                result["origin_addresses"] = []
+                result["origin_addresses"].push(response.origin_addresses)
+                result["origin_addresses"] = result["origin_addresses"].flat()
+            }
+        }
+        if (response.rows != undefined) {
+            if (result["rows"] == undefined) {
+                result["rows"] = []
+            }
+            result["rows"].push(response.rows)
+            result["rows"] = result["rows"].flat()
+        }
+    }
+    // flatten the duration dictionary (since it is split into multiple rows)
+    const tempRows: any[] = []
+    for (let i = 0; i < originsArray.length; i++) {
+        tempRows.push(result.rows[i])
+    }
+    for (let i = originsArray.length; i < result.rows.length; i++) {
+        tempRows[i % originsArray.length].elements = tempRows[i % originsArray.length].elements.concat(result.rows[i].elements)
+        tempRows[i % originsArray.length].elements = tempRows[i % originsArray.length].elements.flat()
+    }
+    result.rows = tempRows
+    //get the restruant's names, ratings, and price_levels
+    const restNames: any[] = []
+    const restRatings: any[] = []
+    const restPriceLevels: any[] = []
+    for (let restruant of allRestaurants) {
+        restNames.push(restruant.name)
+        restRatings.push(restruant.rating)
+        restPriceLevels.push(restruant.price_level)
+    }
+    result.restaurant_names = restNames
+    result.restaurant_ratings = restRatings
+    result.restaurant_price_levels = restPriceLevels
+    res.send(JSON.stringify(result));
 })
 
 app.listen(process.env.PORT || 3000, () => {
