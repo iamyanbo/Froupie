@@ -22,21 +22,26 @@ app.get('/', async (req: Request, res: Response) => {
     const restaurants: any[] = []
     for (let origin of originsArray) {
         // turn origins into geo coordinates
-        const geocode = await axios.get('https://maps.googleapis.com/maps/api/geocode/json'
-            + '?address=' + origin
-            + '&key=' + process.env.GOOGLE_API_KEY
-        )
-        const lat = geocode.data.results[0].geometry.location.lat
-        const lng = geocode.data.results[0].geometry.location.lng
-        // get nearby restaurants for each origin
-        const nearbyRestaurants = await axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json'
-            + '?location=' + lat + ',' + lng
-            + '&radius=50000'
-            + '&type=restaurant'
-            + '&key=' + process.env.GOOGLE_API_KEY
-        )
-        // add each restaurant to the array
-        restaurants.push(nearbyRestaurants.data.results)
+        try {
+            const geocode = await axios.get('https://maps.googleapis.com/maps/api/geocode/json'
+                + '?address=' + origin
+                + '&key=' + process.env.GOOGLE_API_KEY
+            )
+            const lat = geocode.data.results[0].geometry.location.lat
+            const lng = geocode.data.results[0].geometry.location.lng
+            // get nearby restaurants for each origin
+            const nearbyRestaurants = await axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json'
+                + '?location=' + lat + ',' + lng
+                + '&radius=50000'
+                + '&type=restaurant'
+                + '&key=' + process.env.GOOGLE_API_KEY
+            )
+            // add each restaurant to the array
+            restaurants.push(nearbyRestaurants.data.results)
+        } catch (err) {
+            res.status(400).send(err);
+            return;
+        }
     }
     // combine all restaurants into one array and delete duplicates
     const allRestaurants = restaurants.flat().filter((item, index, self) =>
@@ -48,18 +53,12 @@ app.get('/', async (req: Request, res: Response) => {
     for (let restaurant of allRestaurants) {
         geocoded = [...geocoded, restaurant.geometry.location]
     }
-    console.log(allRestaurants.length)
-    // split the array into chunks of size 25
-    const restaurantChunks = allRestaurants.reduce((acc, cur, i) => {
-        const chunkIndex = Math.floor(i / 25)
-        if (!acc[chunkIndex]) {
-            acc[chunkIndex] = []
-        }
-        acc[chunkIndex].push(cur)
-        return acc
+    // split the array into chunks such that each chunk's length times originsArray.length is less than or equal to 100
+    const chunkSize = Math.floor(100 / originsArray.length)
+    const restaurantChunks = []
+    for (let i = 0; i < allRestaurants.length; i += chunkSize) {
+        restaurantChunks.push(allRestaurants.slice(i, i + chunkSize))
     }
-    , [])
-    console.log(restaurantChunks[0].length)
     // for each chunk, get the response from distance matrix api
     const temp: any[] = []
     for (let chunk of restaurantChunks) {
@@ -67,13 +66,18 @@ app.get('/', async (req: Request, res: Response) => {
         //remove special characters from destinations and origins except for '|'
         const originsClean = originsArray.map((origin: any) => origin.replace(/[^\w\s]/gi, '')).join('|')
         const destinationsClean = destinations.replace(/[&\/\\#,+()$~%.":*?<>{}]/g, '')
-        const response = await axios.get('https://maps.googleapis.com/maps/api/distancematrix/json'
-            + '?origins=' + originsClean
-            + '&destinations=' + destinationsClean
-            + '&units=' + 'metric'
-            + '&key=' + process.env.GOOGLE_API_KEY
-        )
-        temp.push(response.data)
+        try{
+            const response = await axios.get('https://maps.googleapis.com/maps/api/distancematrix/json'
+                + '?origins=' + originsClean
+                + '&destinations=' + destinationsClean
+                + '&units=' + 'metric'
+                + '&key=' + process.env.GOOGLE_API_KEY
+            )
+            temp.push(response.data)
+        } catch (error) {
+            res.status(400).send(error)
+            return;
+        }
     }
     // combine all the responses into one dictionary
     const result: any = {}

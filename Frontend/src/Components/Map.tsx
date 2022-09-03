@@ -27,6 +27,7 @@ function MyComponent() {
     }
     const [isChecked, setIsChecked] = React.useState(false)
     const [show, setShow] = React.useState(true)
+    const [error, setError] = React.useState(false)
 
     const handleAddAddress = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
@@ -38,35 +39,37 @@ function MyComponent() {
 
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        // Turn array into string for API call, makes sure to remove empty strings and duplicates
-        const addressString = address.filter((item: string) => item !== "").filter((item: string, index: number) => address.indexOf(item) === index).join("|")
-        const addressClean = "/?origins=" + addressString.replace(/[&\/\\#+()$~%":*?<>{}]/g, '')
-        const result = await axios.get('http://localhost:8080' + addressClean)
-        setData(result.data)
-        setCenter(result.data.geocode[0])
-        console.log(result.data)
-        //clear display data
-        console.log(result.data.destination_addresses.length)
-        let temp: any[] = []
-        // add destination address, price, ratings, and distance to displayData
-        for (let i = 0; i < result.data.destination_addresses.length; i++) {
-            let distance: any[] = []
-            for (let j = 0; j < result.data.rows.length; j++) {
-                distance.push(result.data.rows[j].elements[i])
+        try {
+            // Turn array into string for API call, makes sure to remove empty strings and duplicates
+            const addressString = address.filter((item: string) => item !== "").filter((item: string, index: number) => address.indexOf(item) === index).join("|")
+            const addressClean = "/?origins=" + addressString.replace(/[&\/\\#+()$~%":*?<>{}]/g, '')
+            const result = await axios.get('http://localhost:8080' + addressClean)
+            setData(result.data)
+            setCenter(result.data.geocode[0])
+            //clear display data
+            let temp: any[] = []
+            // add destination address, price, ratings, and distance to displayData
+            for (let i = 0; i < result.data.destination_addresses.length; i++) {
+                let distance: any[] = []
+                for (let j = 0; j < result.data.rows.length; j++) {
+                    distance.push(result.data.rows[j].elements[i])
+                }
+                temp.push({
+                    address: result.data.destination_addresses[i],
+                    price: result.data.restaurant_price_levels[i],
+                    rating: result.data.restaurant_ratings[i],
+                    distance: distance,
+                    name: result.data.restaurant_names[i],
+                    geocode: result.data.geocode[i]
+                })
             }
-            temp.push({
-                address: result.data.destination_addresses[i],
-                price: result.data.restaurant_price_levels[i],
-                rating: result.data.restaurant_ratings[i],
-                distance: distance,
-                name: result.data.restaurant_names[i],
-                geocode: result.data.geocode[i]
-            })
+            //get rid of duplicates
+            temp = temp.filter((item: any, index: number) => temp.indexOf(item) === index)
+            setDisplayData(temp)
+            setError(false)
+        } catch (err) {
+            setError(true)
         }
-        //get rid of duplicates
-        temp = temp.filter((item: any, index: number) => temp.indexOf(item) === index)
-
-        setDisplayData(temp)
     }
 
     const handleSort = (e: any) => {
@@ -91,9 +94,7 @@ function MyComponent() {
         } else if (e.target.id === "name") {
             temp.sort((a: any, b: any) => a.name.localeCompare(b.name))
         }
-
         setDisplayData(temp)
-        console.log(displayData)
     }
 
     const handleChange = (e: any) => {
@@ -115,9 +116,9 @@ function MyComponent() {
     const onUnmount = React.useCallback(function callback(map: any) {
         setMap(null)
     }, [])
-    console.log(cookies.remindMe)
     return isLoaded ? (
         <div className='flex'>
+            {/*Locations input*/}
             <div className= 'w-1/5 h-screen'>
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full" onClick={handleAddAddress}>Add another address</button>
                 {address.map((address1, index) => (
@@ -131,11 +132,11 @@ function MyComponent() {
                         />
                     </div>
                 ))}
-            <div className= 'flex'>
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-1/5 bottom-0 absolute" onClick={handleSubmit}>Search</button>
+                <div className= 'flex'>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-1/5 bottom-0 absolute" onClick={handleSubmit}>Search</button>
+                </div>
             </div>
-
-            </div>
+            {/*Map*/}
             <div className= 'w-3/5 h-screen'>
                 <GoogleMap
                     mapContainerStyle={containerStyle}
@@ -162,14 +163,16 @@ function MyComponent() {
                     </>
                 </GoogleMap>
             </div>
+            {/*Simple restaurant display*/}
             {Object.keys(markerData).length !== 0 ? (
-            <div className='w-1/5 absolute h-[200px] left-[20%] bottom-0 bg-white grid grid-rows-4 gap-1'>
+            <div className='w-1/5 absolute h-[350px] left-[20%] bottom-0 bg-white grid grid-rows-4 gap-1'>
                 <h1 className='border-2 py-2 px-4 border-gray-400 h-full overflow-auto'>Resturant address: {markerData.destination_address}</h1>
                 <h1 className='border-2 py-2 px-4 border-gray-400 h-full overflow-auto'>Resturant name: {markerData.restaurant_name}</h1>
                 <h1 className='border-2 py-2 px-4 border-gray-400 h-full overflow-auto'>Resturant price level: {markerData.restaurant_price_level}</h1>
                 <h1 className='border-2 py-2 px-4 border-gray-400 h-full overflow-auto'>Resturant rating: {markerData.restaurant_rating}</h1>
             </div>
             ): null}
+            {/*Restaurant list display*/}
             <div className='w-1/5 right-0 absolute h-full overflow-auto'>
                 {Object.keys(data).length !== 0 ? (
                     <div className='w-full bg-white'>
@@ -209,10 +212,17 @@ function MyComponent() {
                         </div>
                         <div>
                         {displayData.map((data1: any, index: number) => {
+                            console.log(data1)
                             return (
                             <div className="flex space-x-4 rounded-xl bg-white p-3 shadow-sm border-2 py-2 px-4 border-gray-400 m-2 cursor-pointer hover:bg-gray-300" key={data1.address + data1.name}
                                 onClick={() => {
                                     setCenter(data1.geocode)
+                                    setMarkerData({
+                                        destination_address: data1.address,
+                                        restaurant_name: data1.name,
+                                        restaurant_price_level: data1.price,
+                                        restaurant_rating: data1.rating,
+                                    })
                                 }}>
                                 <div className='rounded-xl p-3'>
                                     <h4 className="font-semibold text-gray-600">{data1.name}</h4>
@@ -239,18 +249,20 @@ function MyComponent() {
                     </h1>
                 }
             </div>
+            {/*Modal*/}
             {cookies.remindMe === 'true' ? (
                 <div>
                     {show ? (
-                        <div className='w-[50%] absolute h-[25%] left-[25%] top-[25%] overflow-auto bg-white rounded-lg'>
+                        <div className='w-[50%] absolute h-[30%] left-[25%] top-[25%] overflow-auto bg-white rounded-lg'>
                         {/* Model for basic information */}
                         <div className='flex justify-center items-center'>
-                            <p className="text-5xl font-bold text-gray-600 m-4">Welcome to Froupie's!</p>
+                            <p className="text-5xl font-bold text-gray-600 mt-8">Welcome to Froupie's!</p>
                         </div>
                         <div className='flex justify-center items-center h-[50%] overflow-auto'>
-                            <p className="justify-center items-center flex w-4/5 flex m-4">This is a website to find nearby restaurant to eat with friends and family. The max number of addresses you can input is 20. This project is made with 
-                                Google API, keep in mind there may be a bit of lag after you submit the request. Not all restaurants may be displayed as the API by default only returns 20 locations, while this may be extended to 60,
-                                doing so will severly reduce performance. In addition, the max radius for finding restaurants is 50km (30-40mins depending on mode of transportation) around the locations given, anything farther than that
+                            <p className="justify-center items-center flex w-4/5 flex m-4">This is a website to find nearby restaurant to eat with friends and family. The max number of addresses you can input is 20 (as more locations are inputted, 
+                            the longer it will take to compute, so be patient!). This project is made with 
+                                Google API. Not all restaurants may be displayed as the API by default only returns 20 retaurant locations, while this may be extended to a max of 60,
+                                doing so will severly reduce performance. In addition, the max radius for finding restaurants is 50km (30-40mins depending on mode of transportation) around any given location, anything farther than that
                                 will not be recorded. For more information on this project, you can take a look at the github repository at the bottom left.
                             </p>
                         </div>
@@ -274,6 +286,13 @@ function MyComponent() {
                     ) : null}
                 </div>
             ): null}
+            {/*Error modal*/}
+            {error ? (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 h-[5%] w-1/5 absolute bottom-[3%] flex items-center justify-center" role="alert">
+                    <strong className="font-bold">Error! One or more input locations are invalid.</strong>
+                    <span className="block sm:inline">{error}</span>
+                    </div>
+            ) : null}
         </div>
     ) : <></>
 }
