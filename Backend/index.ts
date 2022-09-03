@@ -48,6 +48,7 @@ app.get('/', async (req: Request, res: Response) => {
     for (let restaurant of allRestaurants) {
         geocoded = [...geocoded, restaurant.geometry.location]
     }
+    console.log(allRestaurants.length)
     // split the array into chunks of size 25
     const restaurantChunks = allRestaurants.reduce((acc, cur, i) => {
         const chunkIndex = Math.floor(i / 25)
@@ -58,6 +59,7 @@ app.get('/', async (req: Request, res: Response) => {
         return acc
     }
     , [])
+    console.log(restaurantChunks[0].length)
     // for each chunk, get the response from distance matrix api
     const temp: any[] = []
     for (let chunk of restaurantChunks) {
@@ -121,7 +123,7 @@ app.get('/', async (req: Request, res: Response) => {
     result.restaurant_ratings = restRatings
     result.restaurant_price_levels = restPriceLevels
     result.geocode = geocoded
-    res.send(JSON.stringify(result));
+    res.send(result);
 })
 
 app.listen(process.env.PORT || 8080, () => {

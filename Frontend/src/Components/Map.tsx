@@ -38,17 +38,16 @@ function MyComponent() {
 
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        // Turn array into string for API call, makes sure to remove empty strings
-        const addressString = address.filter(address => address !== "").join("|")
+        // Turn array into string for API call, makes sure to remove empty strings and duplicates
+        const addressString = address.filter((item: string) => item !== "").filter((item: string, index: number) => address.indexOf(item) === index).join("|")
         const addressClean = "/?origins=" + addressString.replace(/[&\/\\#+()$~%":*?<>{}]/g, '')
         const result = await axios.get('http://localhost:8080' + addressClean)
         setData(result.data)
         setCenter(result.data.geocode[0])
         console.log(result.data)
         //clear display data
-        setDisplayData([])
         console.log(result.data.destination_addresses.length)
-        let temp = []
+        let temp: any[] = []
         // add destination address, price, ratings, and distance to displayData
         for (let i = 0; i < result.data.destination_addresses.length; i++) {
             let distance: any[] = []
@@ -64,6 +63,9 @@ function MyComponent() {
                 geocode: result.data.geocode[i]
             })
         }
+        //get rid of duplicates
+        temp = temp.filter((item: any, index: number) => temp.indexOf(item) === index)
+
         setDisplayData(temp)
     }
 
@@ -245,10 +247,11 @@ function MyComponent() {
                         <div className='flex justify-center items-center'>
                             <p className="text-5xl font-bold text-gray-600 m-4">Welcome to Froupie's!</p>
                         </div>
-                        <div className='flex justify-center items-center'>
+                        <div className='flex justify-center items-center h-[50%] overflow-auto'>
                             <p className="justify-center items-center flex w-4/5 flex m-4">This is a website to find nearby restaurant to eat with friends and family. The max number of addresses you can input is 20. This project is made with 
-                                Google API, keep in mind there may be a bit of lag after you submit the request. In addition, not all restaurants may be displayed as the API by default only returns 20 locations, while this may be extended to 60,
-                                doing so will make the website really slow. For more information on this project, you can take a look at the github repository at the bottom left.
+                                Google API, keep in mind there may be a bit of lag after you submit the request. Not all restaurants may be displayed as the API by default only returns 20 locations, while this may be extended to 60,
+                                doing so will severly reduce performance. In addition, the max radius for finding restaurants is 50km (30-40mins depending on mode of transportation) around the locations given, anything farther than that
+                                will not be recorded. For more information on this project, you can take a look at the github repository at the bottom left.
                             </p>
                         </div>
                         <button className="hover:bg-gray-500 bg-gray-200 inline-block px-8 py-2 text-white font-medium leading-tight uppercase rounded shadow-md hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out absolute bottom-0 left-0 m-4"
