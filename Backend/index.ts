@@ -53,8 +53,8 @@ app.get('/', async (req: Request, res: Response) => {
     for (let restaurant of allRestaurants) {
         geocoded = [...geocoded, restaurant.geometry.location]
     }
-    // split the array into chunks such that each chunk's length times originsArray.length is less than or equal to 100
-    const chunkSize = Math.floor(100 / originsArray.length)
+    // split the array into chunks such that each chunk's length times originsArray.length is less than or equal to 100, with the max length being 25
+    const chunkSize = Math.min(Math.floor(100 / originsArray.length), 25)
     const restaurantChunks = []
     for (let i = 0; i < allRestaurants.length; i += chunkSize) {
         restaurantChunks.push(allRestaurants.slice(i, i + chunkSize))
