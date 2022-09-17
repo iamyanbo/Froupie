@@ -15,4 +15,4 @@ If you are running this locally, make sure you have a .env file in the frontend 
 ## Backend
 This was made in Typescript with Express Node.js, the main purpose I have decided to split this project into front and backend was because of self practice, this project can be written completely as a frontend application given some CORS tweaks. 
 
-If you are running this locally, make sure you have a .env file in the backend folder with your API key labeled as GOOGLE_API_KEY. To start, use ### npm run dev.
+If you are running this locally, make sure you have a .env file in the backend folder with your API key labeled as GOOGLE_API_KEY. To start, use npm run dev.
