@@ -13,14 +13,14 @@ function MyComponent() {
         id: 'google-map-script',
         googleMapsApiKey: process.env.REACT_APP_API_KEY!,
     })
-
+    // create states 
     const [map, setMap] = React.useState(null)
     const [address, setaddress] = React.useState([""])
     const [data, setData] = React.useState<any>({})
     const [center, setCenter] = React.useState({ lat: 40.730610, lng: -73.935242 })
     const [zoom, setZoom] = React.useState(12)
-    const [markerData, setMarkerData] = React.useState<any>({})
-    const [displayData, setDisplayData] = React.useState<any>([])
+    const [markerData, setMarkerData] = React.useState<any>({}) // this is the data that will be displayed on the bottom left of the map for quick reference
+    const [displayData, setDisplayData] = React.useState<any>([]) // this is the data that will be displayed on the right side of the screen
     const [cookies, setCookie] = useCookies(['remindMe']);
     if (cookies.remindMe === undefined) {
         setCookie('remindMe', true, { path: '/' });
@@ -30,6 +30,7 @@ function MyComponent() {
     const [error, setError] = React.useState(false)
 
     const handleAddAddress = (e: React.MouseEvent<HTMLButtonElement>) => {
+        // function to add another input field
         e.preventDefault()
         // max address is 20
         if (address.length < 20) {
@@ -40,10 +41,17 @@ function MyComponent() {
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         try {
-            // Turn array into string for API call, makes sure to remove empty strings and duplicates
-            const addressString = address.filter((item: string) => item !== "").filter((item: string, index: number) => address.indexOf(item) === index).join("|")
-            const addressClean = "/?origins=" + addressString.replace(/[&\/\\#+()$~%":*?<>{}]/g, '')
-            const result = await axios.get('http://localhost:8080' + addressClean)
+            // remove duplicate address from array
+            const uniqueAddress = address.filter((v, i, a) => a.indexOf(v) === i);
+            // remove empty address from array
+            const filteredAddress = uniqueAddress.filter(function (el) {
+                return el !== "";
+            });
+            // join address with "|" for api
+            const addressString = filteredAddress.join("|")
+            console.log("hewre",addressString)
+            const addressClean = "/?origins=" + addressString.replace(/[&\\#+()$~%":*?<>{}]/g, '')
+            const result = await axios.get('https://froupie-backend.onrender.com' + addressClean)
             setData(result.data)
             setCenter(result.data.geocode[0])
             //clear display data
@@ -73,6 +81,7 @@ function MyComponent() {
     }
 
     const handleSort = (e: any) => {
+        // sort displayData by price, rating, distance, or name
         let temp = [...displayData]
         if (e.target.id === "price") {
             temp.sort((a: any, b: any) => a.price - b.price)
@@ -102,12 +111,14 @@ function MyComponent() {
     }
 
     const handleUnderstand = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        // clear popup disclaimer
         e.preventDefault()
         setCookie('remindMe', !isChecked, { path: '/' })
         setShow(false)
     }
 
     const onLoad = React.useCallback(function callback(map: any) {
+        // create map
         const bounds = new window.google.maps.LatLngBounds(center);
         map.fitBounds(bounds);
         setMap(map)
@@ -116,6 +127,7 @@ function MyComponent() {
     const onUnmount = React.useCallback(function callback(map: any) {
         setMap(null)
     }, [])
+
     return isLoaded ? (
         <div className='flex'>
             {/*Locations input*/}
@@ -234,9 +246,7 @@ function MyComponent() {
                                             // Don't use index as key
                                             <p className="text-sm text-slate-400" key={data2.distance.text + data2.duration.text + index}>From address {index + 1}: {data2.distance.text}, {data2.duration.text}</p>
                                         )
-                                    }
-                                    )}
-                                        
+                                    })}
                                 </div>
                             </div>
                             )
@@ -249,7 +259,7 @@ function MyComponent() {
                     </h1>
                 }
             </div>
-            {/*Modal*/}
+            {/*Modal/disclaimer*/}
             {cookies.remindMe === 'true' ? (
                 <div>
                     {show ? (
@@ -263,7 +273,7 @@ function MyComponent() {
                             the longer it will take to compute, so be patient!). This project is made with 
                                 Google API. Not all restaurants may be displayed as the API by default only returns 20 retaurant locations, while this may be extended to a max of 60,
                                 doing so will severly reduce performance. In addition, the max radius for finding restaurants is 50km (30-40mins depending on mode of transportation) around any given location, anything farther than that
-                                will not be recorded. For more information on this project, you can take a look at the github repository at the bottom left.
+                                will not be recorded.  For more information on this project, you can take a look at the github repository at the bottom left.
                             </p>
                         </div>
                         <button className="hover:bg-gray-500 bg-gray-200 inline-block px-8 py-2 text-white font-medium leading-tight uppercase rounded shadow-md hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out absolute bottom-0 left-0 m-4"
