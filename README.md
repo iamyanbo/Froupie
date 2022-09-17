@@ -1,9 +1,10 @@
 # Froupie
-Website to find a nearby restaurant for a group of friends or family
+A Website to find nearby restaurants given multiple starting addresses.
 
 This project was made in Typescript with React for frontend and Express Node.js for backend.
-To visit the website, open [https://froupie-frontend.vercel.app/](https://froupie-frontend.vercel.app/) to view it in browser
-To view the project for yourself, clone this repository and get an API key from google and store it in a .env in both front and backend
+To visit the website, open [https://froupie-frontend.vercel.app/](https://froupie-frontend.vercel.app/) to view it in browser.
+
+To view the project for yourself, clone this repository and get an API key from google and store it in a .env in both front and backend. For more information on how to get your own API key from Google, visit [https://developers.google.com/maps/documentation/javascript/get-api-key](https://developers.google.com/maps/documentation/javascript/get-api-key).
 
 ## Frontend
 This was made in Typescript with React. When first visiting the website, you will be prompted with a disclaimer, this includes all the details of the website, what it can do and its limitations. If this was missed for some reason, it is written below.
@@ -16,3 +17,6 @@ If you are running this locally, make sure you have a .env file in the frontend 
 This was made in Typescript with Express Node.js, the main purpose I have decided to split this project into front and backend was because of self practice, this project can be written completely as a frontend application given some CORS tweaks. 
 
 If you are running this locally, make sure you have a .env file in the backend folder with your API key labeled as GOOGLE_API_KEY. To start, use npm run dev.
+
+## Hosting 
+This application was hosted by Vercel for frontend and Google Firebase for backend
