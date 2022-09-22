@@ -50,7 +50,6 @@ function MyComponent() {
             });
             // join address with "|" for api
             const addressString = filteredAddress.join("|")
-            console.log("hewre",addressString)
             const addressClean = "/?origins=" + addressString.replace(/[&\\#+()$~%":*?<>{}]/g, '')
             const result = await axios.get('https://froupie-backend.onrender.com' + addressClean)
             setData(result.data)
