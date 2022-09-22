@@ -1,5 +1,5 @@
 # Froupie
-A Website to find nearby restaurants given multiple starting addresses.
+A Website to find nearby restaurants given multiple starting addresses (Inspired by my friends and I who wanted to find a place close to all of us to eat).
 
 This project was made in Typescript with React for frontend and Express Node.js for backend.
 To visit the website, open [https://froupie-frontend.vercel.app/](https://froupie-frontend.vercel.app/) to view it in browser.
@@ -20,3 +20,8 @@ If you are running this locally, make sure you have a .env file in the backend f
 
 ## Hosting 
 This application was hosted by Vercel for frontend and Google Firebase for backend
+
+## TODOS
+- Implement Signup/Login for users
+- (Save locations) Implement persistance to SQL database for output data given a set of input locations
+- ("Folder" for saved locations) Implement quick access for data saved in database
