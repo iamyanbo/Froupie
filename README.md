@@ -7,7 +7,7 @@ To visit the website, open [https://froupie-frontend.vercel.app/](https://froupi
 To view the project for yourself, clone this repository and get an API key from google and store it in a .env in both front and backend. For more information on how to get your own API key from Google, visit [https://developers.google.com/maps/documentation/javascript/get-api-key](https://developers.google.com/maps/documentation/javascript/get-api-key).
 
 ## Frontend
-This was made in Typescript with React. When first visiting the website, you will be prompted with a disclaimer, this includes all the details of the website, what it can do and its limitations. If this was missed for some reason, it is written below.
+This was made in Typescript with React. When first visiting the website, you will be prompted with a disclaimer, this includes all the details of the website, what it can do and its limitations. If this was missed for some reason, it is written below. (Note, if you are viewing this on the website, the initial load may take up to a minute since the database may be on pause)
 
 This is a website to find nearby restaurant to eat with friends and family. The max number of addresses you can input is 20 (as more locations are inputted, the longer it will take to compute, so be patient!). This project is made with Google API. Not all restaurants may be displayed as the API by default only returns 20 retaurant locations, while this may be extended to a max of 60, doing so will severly reduce performance. In addition, the max radius for finding restaurants is 50km (30-40mins depending on mode of transportation) around any given location, anything farther than that will not be recorded.
 
