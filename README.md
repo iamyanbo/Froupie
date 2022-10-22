@@ -23,5 +23,5 @@ This application was hosted by Vercel for frontend and Google Firebase for backe
 
 ## TODOS
 - Implement Signup/Login for users
-- (Save locations) Implement persistance to SQL database for output data given a set of input locations
+- (Save locations) Implement persistance to MySQL AWS database for output data given a set of input locations
 - ("Folder" for saved locations) Implement quick access for data saved in database
