@@ -16,12 +16,14 @@ If you are running this locally, make sure you have a .env file in the frontend 
 ## Backend
 This was made in Typescript with Express Node.js, the main purpose I have decided to split this project into front and backend was because of self practice, this project can be written completely as a frontend application given some CORS tweaks. 
 
+Update: Now that authentication and persistance of data is implemented, it makes sense to seperate this project into front and backend. This repository will not include the implementation of signup/in and save because of security risks, but the basics (getting data and sending the data) is there for you to view.
+
 If you are running this locally, make sure you have a .env file in the backend folder with your API key labeled as GOOGLE_API_KEY. To start, use npm run dev.
 
 ## Hosting 
-This application was hosted by Vercel for frontend and Google Firebase for backend
+This application was hosted by Vercel for frontend and Heroku for backend
 
 ## TODOS
-- Implement Signup/Login for users
-- (Save locations) Implement persistance to MySQL AWS database for output data given a set of input locations
-- ("Folder" for saved locations) Implement quick access for data saved in database
+- Implement Signup/Login for users (DONE Oct, 10, 2022)
+- (Save locations) Implement persistance to MySQL AWS database for output data given a set of input locations (DONE Oct, 20, 2022)
+- ("Folder" for saved locations) Implement quick access for data saved in database in frontend (DONE Oct, 22, 2022)
