@@ -4,7 +4,7 @@ A Website to find nearby restaurants given multiple starting addresses (Inspired
 This project was made in Typescript with React for frontend and Express Node.js for backend.
 To visit the website, open [https://froupie-frontend.vercel.app/](https://froupie-frontend.vercel.app/) to view it in browser.
 
-To view the project for yourself, clone this repository and get an API key from google and store it in a .env in both front and backend. For more information on how to get your own API key from Google, visit [https://developers.google.com/maps/documentation/javascript/get-api-key](https://developers.google.com/maps/documentation/javascript/get-api-key).
+To view the project for yourself, clone this repository and get an API key from Google and store it in a .env in both front and backend. For more information on how to get your own API key from Google, visit [https://developers.google.com/maps/documentation/javascript/get-api-key](https://developers.google.com/maps/documentation/javascript/get-api-key).
 
 ## Frontend
 This was made in Typescript with React. When first visiting the website, you will be prompted with a disclaimer, this includes all the details of the website, what it can do and its limitations. If this was missed for some reason, it is written below. (Note, if you are viewing this on the website, the initial load may take up to a minute since the database may be on pause)
