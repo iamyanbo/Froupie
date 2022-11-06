@@ -13,14 +13,14 @@ This is a website to find nearby restaurant to eat with friends and family. The 
 
 The output locations are limited to 20 per input location, while this is extendable to 60 per, [Google API documentation](https://developers.google.com/maps/documentation/javascript/places#place_searches) states you must wait two seconds after executing a search to get another set of results. With more input locations and accounting for calculations, this will severly reduce performance. 
 
-If you are running this locally, make sure you have a .env file in the frontend folder with your API key labeled as REACT_APP_API_KEY. To start, use npm start. There is a bug in this version where if you input locations far apart, it causes an error, this is fixed in the newest update.
+If you are running this locally, make sure you have a .env file in the frontend folder with your API key labeled as REACT_APP_API_KEY. To start, use ### `npm start`. There is a bug in this version where if you input locations far apart, it causes an error, this is fixed in the newest update.
 
 ## Backend
 This was made in Typescript with Express Node.js, the main purpose I have decided to split this project into front and backend was because of self practice, this project can be written completely as a frontend application given some CORS tweaks. 
 
 Update: Now that authentication and persistance of data is implemented, it makes sense to seperate this project into front and backend. This repository will not include the implementation of signup/in and save because of security risks, but the basics (getting data and sending the data) is there for you to view.
 
-If you are running this locally, make sure you have a .env file in the backend folder with your API key labeled as GOOGLE_API_KEY. To start, use npm run dev.
+If you are running this locally, make sure you have a .env file in the backend folder with your API key labeled as GOOGLE_API_KEY. To start, use ### `npm run dev`.
 
 ## Hosting 
 This application was hosted by Vercel for frontend and Heroku for backend
