@@ -9,6 +9,8 @@ To view the project for yourself, clone this repository and get an API key from 
 ## Frontend
 This was made in Typescript with React. When first visiting the website, you will be prompted with a disclaimer, this includes all the details of the website, what it can do and its limitations. If this was missed for some reason, it is written below. (Note, if you are viewing this on the website, the initial load may take up to a minute since the database may be on pause)
 
+Be specific about the input locations, there are many locations in the world that have the same name! Alternatively, you may let the website to use your current location to better find the locations you are looking for. (Your location is only used in giving the Google API more information for better accuracy as sometimes it can send you to another country with the same address, nothing else)
+
 This is a website to find nearby restaurant to eat with friends and family. The max number of addresses you can input is 20 (as more locations are inputted, the longer it will take to compute, so be patient!). This project is made with Google API. Not all restaurants may be displayed as the API by default only returns 20 retaurant locations, while this may be extended to a max of 60, doing so will severly reduce performance. In addition, the max radius for finding restaurants is 50km (30-40mins depending on mode of transportation) around any given location, anything farther than that will not be recorded.
 
 The output locations are limited to 20 per input location, while this is extendable to 60 per, [Google API documentation](https://developers.google.com/maps/documentation/javascript/places#place_searches) states you must wait two seconds after executing a search to get another set of results. With more input locations and accounting for calculations, this will severly reduce performance. 
@@ -31,4 +33,4 @@ This application was hosted by Vercel for frontend and Heroku for backend
 - ("Folder" for saved locations) Implement quick access for data saved in database in frontend (DONE Oct, 22, 2022)✅
 - Delete saved locations (DONE Nov, 5, 2022)✅
 - Search bar (DONE Nov, 22, 2022)✅
-- TENTATIVE: Implement "allow location" to reduce need of specificity in inputs
+- Implement "allow location" to reduce need of specificity in inputs (DONE Nov, 24, 2022)✅
