@@ -30,5 +30,5 @@ This application was hosted by Vercel for frontend and Heroku for backend
 - (Save locations) Implement persistance to MySQL AWS database for output data given a set of input locations (DONE Oct, 20, 2022)✅
 - ("Folder" for saved locations) Implement quick access for data saved in database in frontend (DONE Oct, 22, 2022)✅
 - Delete saved locations (DONE Nov, 5, 2022)✅
-- Search bar
+- Search bar (DONE Nov, 22, 2022)✅
 - TENTATIVE: Implement "allow location" to reduce need of specificity in inputs
