@@ -34,3 +34,4 @@ This application was hosted by Vercel for frontend and Heroku for backend
 - Delete saved locations (DONE Nov, 5, 2022)✅
 - Search bar (DONE Nov, 22, 2022)✅
 - Implement "allow location" to reduce need of specificity in inputs (DONE Nov, 24, 2022)✅
+- Implement sending custom email page (testing React Email)
