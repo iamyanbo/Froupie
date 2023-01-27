@@ -28,7 +28,7 @@ If you are running this locally, make sure you have a .env file in the backend f
 This application was hosted by Vercel for frontend and Heroku for backend
 
 ## Other Documentation
-This application used [React Email](https://react.email/)
+This application uses [React Email](https://react.email/) to send pretty emails. For more documentation on how to use React Email, please refer to their documentations at [https://react.email/docs/introduction](https://react.email/docs/introduction)
 
 ## TODOS
 - Implement Signup/Login for users (DONE Oct, 10, 2022)✅
