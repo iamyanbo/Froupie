@@ -27,6 +27,9 @@ If you are running this locally, make sure you have a .env file in the backend f
 ## Hosting 
 This application was hosted by Vercel for frontend and Heroku for backend
 
+## Other Documentation
+This application used [React Email](https://react.email/)
+
 ## TODOS
 - Implement Signup/Login for users (DONE Oct, 10, 2022)✅
 - (Save locations) Implement persistance to MySQL AWS database for output data given a set of input locations (DONE Oct, 20, 2022)✅
@@ -34,4 +37,4 @@ This application was hosted by Vercel for frontend and Heroku for backend
 - Delete saved locations (DONE Nov, 5, 2022)✅
 - Search bar (DONE Nov, 22, 2022)✅
 - Implement "allow location" to reduce need of specificity in inputs (DONE Nov, 24, 2022)✅
-- Implement sending custom email page (testing React Email)
+- Implement sending custom email page (testing React Email) (DONE Janurary, 27, 2022)✅
